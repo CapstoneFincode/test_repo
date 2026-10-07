@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: fincode-email-lab
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --no-access-log
+    healthCheckPath: /healthz
+    autoDeployTrigger: "off"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.14
+      - key: BAZE_MODEL
+        value: gemini-3.5-flash-lite
+      - key: LLM_CALLS_ENABLED
+        value: "false"
+      - key: BAZE_API_KEY
+        sync: false
+      - key: LAB_ACCESS_PASSWORD
+        generateValue: true

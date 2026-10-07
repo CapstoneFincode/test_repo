@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#101b32">
+    <title>FINCODE — 이메일 요약 실험실</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/app.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#workspace">입력 영역으로 이동</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="FINCODE 이메일 요약 실험실 홈">
+          <span class="brand-symbol" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="brand-name">FINCODE</span><span class="brand-divider" aria-hidden="true"></span><span class="brand-product">EMAIL LAB</span>
+        </a>
+        <div class="header-caption"><span class="header-dot" aria-hidden="true"></span>한림대학교 캡스톤 프로젝트</div>
+      </div>
+    </header>
+
+    <main class="main-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-number">01</span>이메일 요약 <span class="eyebrow-slash">/</span> BASELINE</p>
+          <h1 id="page-title">이메일 요약 실험실<span class="title-dot">.</span></h1>
+          <p class="intro-description">이메일을 입력하고, LLM이 읽어낸 핵심 내용을 확인하세요.</p>
+        </div>
+        <div class="model-card">
+          <span class="model-symbol" aria-hidden="true">✦</span>
+          <div><span class="meta-label">실험 모델</span><p class="model-name" id="model-name">Google Gemini 3.5 Flash Lite</p><p class="model-id" id="model-id">모델 설정 확인 중</p></div>
+        </div>
+      </section>
+
+      <div class="experiment-strip">
+        <div class="experiment-label"><span class="experiment-icon" aria-hidden="true">⌘</span><strong>실험용 취약 프롬프트</strong><span class="prompt-version" id="prompt-version">vulnerable-v1</span></div>
+        <p>이메일 본문을 지시문과 함께 모델에 전달하는 기초 실험입니다.</p>
+      </div>
+
+      <div class="setup-notice" id="setup-notice" role="status">
+        <span class="notice-icon" aria-hidden="true">i</span>
+        <div><strong id="setup-title">연결 설정을 확인하고 있습니다</strong><p id="setup-description">잠시만 기다려 주세요.</p></div>
+        <span class="status-pill" id="connection-status">확인 중</span>
+      </div>
+      <p class="page-error" id="page-error" role="alert" hidden></p>
+
+      <div class="workspace" id="workspace">
+        <section class="panel editor-panel" aria-labelledby="input-heading">
+          <div class="panel-heading"><div class="panel-title-group"><span class="panel-step">01</span><h2 id="input-heading">이메일 입력</h2></div><span class="panel-description">INPUT</span></div>
+          <form id="email-form">
+            <div class="sample-row"><label for="sample-select">샘플 이메일</label><div class="select-wrapper"><select id="sample-select" aria-label="샘플 이메일 선택"><option value="">직접 작성하기</option></select><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg></div></div>
+            <div class="editor-fields">
+              <div class="field"><label for="sender">보낸 사람 <span class="optional-label">선택</span></label><input id="sender" name="sender" type="text" maxlength="300" placeholder="예: team@fincode.example" autocomplete="off" spellcheck="false"></div>
+              <div class="field"><label for="subject">제목 <span class="optional-label">선택</span></label><input id="subject" name="subject" type="text" maxlength="300" placeholder="이메일 제목을 입력하세요" autocomplete="off"></div>
+              <div class="field body-field"><div class="field-label-row"><label for="body">본문 <span class="required-mark" aria-label="필수">*</span></label><span class="character-count" id="character-count">0 / 20,000자</span></div><textarea id="body" name="body" required maxlength="20000" placeholder="요약할 이메일 내용을 입력하거나 위에서 샘플을 선택하세요." spellcheck="false" aria-describedby="body-hint"></textarea><p class="field-hint" id="body-hint">샘플 내용을 자유롭게 수정하며 결과를 비교할 수 있습니다.</p></div>
+            </div>
+            <details class="prompt-details" id="prompt-details">
+              <summary><span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 5-5 5 5 5m6-10 5 5-5 5"/></svg>프롬프트 보기</span><span class="preview-note">모델 호출 없이 확인</span><svg class="details-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg></summary>
+              <div class="prompt-content"><p>현재 입력으로 구성된 프롬프트입니다.</p><pre id="prompt-preview" aria-live="polite">프롬프트를 불러오는 중입니다.</pre></div>
+            </details>
+            <p class="form-error" id="form-error" role="alert" hidden></p>
+            <div class="editor-actions"><button class="button button-quiet" type="button" id="clear-button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M7 6V4h6v2M6 6l1 11h6l1-11M9 9v5m2-5v5"/></svg>내용 비우기</button><button class="button button-primary" type="submit" id="summarize-button" disabled><span class="button-spinner" aria-hidden="true"></span><span id="summarize-label">이메일 요약하기</span><svg class="button-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></button></div>
+          </form>
+        </section>
+
+        <section class="panel result-panel" aria-labelledby="result-heading">
+          <div class="panel-heading"><div class="panel-title-group"><span class="panel-step">02</span><h2 id="result-heading">요약 결과</h2></div><span class="result-status" id="result-status"><span aria-hidden="true"></span>대기 중</span></div>
+          <div class="result-area" id="result-area" aria-live="polite" aria-busy="false">
+            <div class="empty-result" id="empty-result">
+              <div class="empty-illustration" aria-hidden="true"><div class="illustration-page"><span class="illustration-line first"></span><span class="illustration-line"></span><span class="illustration-line short"></span><div class="illustration-divider"></div><span class="illustration-line"></span><span class="illustration-line short"></span></div><span class="illustration-spark">✦</span></div>
+              <h3>첫 번째 요약을 기다리고 있어요</h3><p>왼쪽에 이메일을 입력하면<br>이곳에서 요약 결과를 확인할 수 있습니다.</p><span class="empty-call-note"><span aria-hidden="true"></span>아직 모델을 호출하지 않았습니다</span>
+            </div>
+            <div class="loading-result" id="loading-result" hidden><div class="loading-orbit" aria-hidden="true"></div><h3>이메일을 읽고 있습니다</h3><p>모델이 핵심 내용을 정리하는 중입니다.</p></div>
+            <div class="success-result" id="success-result" hidden><div class="summary-overline">SUMMARY <span id="summary-prompt-version"></span></div><p class="stale-notice" id="stale-notice" hidden>입력이 변경되었습니다. 아래는 이전 입력의 요약 결과입니다.</p><div class="summary-text" id="summary-text"></div></div>
+            <div class="error-result" id="error-result" hidden><span class="result-error-icon" aria-hidden="true">!</span><h3>요약을 완료하지 못했습니다</h3><p id="result-error-message"></p><p class="error-help">입력 내용과 API 설정을 확인한 뒤 다시 시도해 주세요.</p></div>
+          </div>
+          <div class="result-footer"><span class="result-footer-label"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v2m0 10v2M3 10h2m10 0h2M5 5l1.5 1.5m7 7L15 15M5 15l1.5-1.5m7-7L15 5"/><circle cx="10" cy="10" r="3"/></svg>모델 응답 원문</span><span class="result-metrics" id="result-metrics">결과가 생성되면 표시됩니다</span></div>
+        </section>
+      </div>
+
+      <footer class="site-footer"><span><strong>FINCODE</strong> LLM Prompt Injection Research</span><span>이메일 요약 · 첫 번째 실험</span></footer>
+    </main>
+  </body>
+</html>
